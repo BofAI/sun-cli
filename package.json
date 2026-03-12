@@ -1,0 +1,53 @@
+{
+  "name": "@bankofai/sun-cli",
+  "version": "1.0.0",
+  "description": "CLI tool for SUN.IO / SUNSWAP on TRON — for humans and AI agents",
+  "main": "dist/bin.js",
+  "type": "commonjs",
+  "bin": {
+    "sun": "./bin/sun"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "ts-node src/bin.ts",
+    "start": "node dist/bin.js",
+    "clean": "rm -rf dist",
+    "test": "jest"
+  },
+  "files": [
+    "dist/**/*",
+    "bin",
+    "SKILL.md",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "tron",
+    "sunswap",
+    "sun.io",
+    "defi",
+    "cli",
+    "ai-agent"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@bankofai/agent-wallet": "^2.0.0-beta.0",
+    "@bankofai/sun-kit": "^0.1.0-beta.0",
+    "@scure/bip32": "^2.0.1",
+    "@scure/bip39": "^2.0.1",
+    "chalk": "^4.1.2",
+    "cli-table3": "^0.6.5",
+    "commander": "^12.1.0",
+    "dotenv": "^16.4.5",
+    "ora": "^5.4.1",
+    "tronweb": "^6.2.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^20.0.0",
+    "jest": "^30.3.0",
+    "ts-jest": "^29.4.6",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.0.0"
+  }
+}
