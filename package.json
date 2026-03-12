@@ -32,7 +32,7 @@
   "license": "MIT",
   "dependencies": {
     "@bankofai/agent-wallet": "^2.0.0-beta.0",
-    "@bankofai/sun-kit": "file:bankofai-sun-kit-0.1.0-beta.2.tgz",
+    "@bankofai/sun-kit": "@bankofai/sun-kit@0.1.0-beta.1",
     "@scure/bip32": "^2.0.1",
     "@scure/bip39": "^2.0.1",
     "chalk": "^4.1.2",
