@@ -169,12 +169,12 @@ sun liquidity v2:remove --token-a TRX --token-b USDT --liquidity 500000
 ### Liquidity — V3
 
 ```bash
-# Mint position (PM auto-detected, tick range auto-computed, single-token input)
-sun liquidity v3:mint --token0 TRX --token1 USDT --fee 3000 --amount0 1000000
+# Mint position (PM auto-detected, tick/fee auto-computed, single-token input)
+sun liquidity v3:mint --token0 TRX --token1 USDT --amount0 1000000
 
-# With explicit tick range
+# With explicit tick range and fee
 sun liquidity v3:mint --token0 TRX --token1 USDT --fee 3000 \
-                      --tick-lower -100 --tick-upper 100 --amount0 1000000
+                      --tick-lower -887220 --tick-upper 887220 --amount0 1000000
 
 # Increase/Decrease/Collect
 sun liquidity v3:increase --token-id 123 --amount0 500000

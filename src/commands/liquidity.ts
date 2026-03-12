@@ -292,7 +292,7 @@ export function registerLiquidityCommands(program: Command) {
     .option('--pm <address>', 'V3 NonfungiblePositionManager address (auto-detected by network)')
     .requiredOption('--token0 <tokenOrAddress>', 'Token0 (symbol like TRX/USDT or address)')
     .requiredOption('--token1 <tokenOrAddress>', 'Token1 (symbol like TRX/USDT or address)')
-    .requiredOption('--fee <n>', 'Pool fee tier (e.g. 500, 3000)')
+    .option('--fee <n>', 'Pool fee tier (default: 3000)')
     .option('--tick-lower <n>', 'Lower tick (auto-computed if omitted)')
     .option('--tick-upper <n>', 'Upper tick (auto-computed if omitted)')
     .option('--amount0 <raw>', 'Desired amount of token0')
@@ -340,7 +340,7 @@ export function registerLiquidityCommands(program: Command) {
           'Position Manager': pm,
           'Token0': `${token0Display}${token0Note} (${token0})`,
           'Token1': `${token1Display}${token1Note} (${token1})`,
-          'Fee': opts.fee,
+          'Fee': opts.fee || '3000 (default)',
           'Tick Range': tickRange,
           'Amount0': opts.amount0 || '(auto)',
           'Amount1': opts.amount1 || '(auto)',
@@ -355,7 +355,7 @@ export function registerLiquidityCommands(program: Command) {
           abi: opts.abi ? JSON.parse(opts.abi) : undefined,
           token0,
           token1,
-          fee: parseInt(opts.fee),
+          fee: opts.fee ? parseInt(opts.fee) : undefined,
           tickLower: opts.tickLower ? parseInt(opts.tickLower) : undefined,
           tickUpper: opts.tickUpper ? parseInt(opts.tickUpper) : undefined,
           amount0Desired: opts.amount0,
