@@ -1,5 +1,20 @@
 import { Command } from 'commander'
+import { getNetwork } from '../lib/context'
 import { readApiAction } from '../lib/command'
+import { tryResolveTokenAddress } from '../lib/tokens'
+import { TRX_ADDRESS, WTRX_MAINNET, WTRX_NILE } from '@bankofai/sun-kit'
+
+function resolveTokenForPoolQuery(input: string | undefined, network: string): string | undefined {
+  if (!input) return undefined
+
+  const resolved = tryResolveTokenAddress(input, network)
+  if (!resolved) return input
+
+  if (resolved === TRX_ADDRESS) {
+    return network === 'nile' ? WTRX_NILE : WTRX_MAINNET
+  }
+  return resolved
+}
 
 export function registerPoolCommands(program: Command) {
   const pool = program
@@ -10,19 +25,22 @@ export function registerPoolCommands(program: Command) {
     .command('list')
     .description('Fetch pools')
     .option('--address <poolAddress>', 'Pool contract address')
-    .option('--token <tokenAddress>', 'Filter by token address')
+    .option('--token <tokenOrAddress>', 'Filter by token (symbol like TRX/USDT or address)')
     .option('--protocol <protocol>', 'Protocol filter (V2, V3)')
     .option('--page <n>', 'Page number', '1')
     .option('--page-size <n>', 'Page size', '20')
     .option('--sort <field>', 'Sort field')
     .option('--no-blacklist', 'Include blacklisted')
     .action(async (opts) => {
+      const network = getNetwork()
+      const tokenAddress = resolveTokenForPoolQuery(opts.token, network)
+
       await readApiAction({
         spinnerLabel: 'Fetching pools...',
         errorLabel: 'Failed to fetch pools',
         execute: (api) => api.getPools({
           poolAddress: opts.address,
-          tokenAddress: opts.token,
+          tokenAddress,
           protocol: opts.protocol,
           pageNo: parseInt(opts.page),
           pageSize: parseInt(opts.pageSize),

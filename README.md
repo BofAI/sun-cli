@@ -81,6 +81,30 @@ TRON_PRIVATE_KEY=your-private-key
 | `-y, --yes` | Skip confirmation prompts | `sun --yes swap ...` |
 | `--dry-run` | Show what would execute, without running | `sun --dry-run swap ...` |
 
+## Token Symbols
+
+Most commands accept token symbols in addition to addresses. Supported symbols (mainnet):
+
+| Symbol | Address | Decimals |
+|--------|---------|----------|
+| TRX | T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb | 6 |
+| WTRX | TNUC9Qb1rRpS5CbWLmNMxXBjyFoydXjWFR | 6 |
+| USDT | TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t | 6 |
+| USDC | TEkxiTehnzSmSe2XqrBj4w32RUN966rdz8 | 6 |
+| USDD | TPYmHEhy5n8TCEfYGqW2rPxsghSfzghPDn | 18 |
+| SUN | TSSMHYeV2uE9qYH95DqyoCuNCzEL1NvU3S | 18 |
+| JST | TCFLL5dx5ZJdKnWuesXxi1VPwjLVmWZZy9 | 18 |
+| BTT | TAFjULxiVgT4qWk6UZwjqwZXTSaGaqnVp4 | 18 |
+| WIN | TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7 | 6 |
+
+Example:
+
+```bash
+# These are equivalent:
+sun swap TRX USDT 1000000000
+sun swap T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t 1000000000
+```
+
 ## Commands
 
 ### Wallet
@@ -120,38 +144,60 @@ sun pool liq-history <poolAddress> --start 2026-01-01
 sun swap <tokenIn> <tokenOut> <amount> --slippage 0.005
 
 # Quote only (read-only, no wallet needed)
-sun swap:quote --router <addr> --args '[...]'
+sun swap:quote <tokenIn> <tokenOut> <amount>
+sun swap:quote <tokenIn> <tokenOut> <amount> --all    # Show all routes
 
-# Low-level exact input
+# Low-level commands (for advanced users)
+sun swap:quote-raw --router <addr> --args '[...]'     # Quote via contract call
 sun swap:exact-input --router <addr> --args '[...]' --value 1000000
 ```
 
 ### Liquidity — V2
 
 ```bash
-sun liquidity v2:add    --router <addr> --token-a <addr> --token-b <addr> --amount-a 1000000 --amount-b 2000000
-sun liquidity v2:remove --router <addr> --token-a <addr> --token-b <addr> --liquidity 500000
+# Add liquidity using token symbols (TRX, USDT, SUN, etc.)
+sun liquidity v2:add --token-a TRX --token-b USDT --amount-a 1000000000 --amount-b 290000000
+
+# Single-token input: auto-calculate other amount based on pool ratio
+sun liquidity v2:add --token-a TRX --token-b USDT --amount-a 1000000000
+sun liquidity v2:add --token-a TRX --token-b USDT --amount-b 290000000
+
+# Remove liquidity
+sun liquidity v2:remove --token-a TRX --token-b USDT --liquidity 500000
 ```
 
 ### Liquidity — V3
 
 ```bash
-sun liquidity v3:mint      --pm <addr> --token0 <addr> --token1 <addr> --fee 3000 \
-                           --tick-lower -100 --tick-upper 100 --amount0 1000000 --amount1 2000000
-sun liquidity v3:increase  --pm <addr> --token-id 123 --amount0 500000 --amount1 500000
-sun liquidity v3:decrease  --pm <addr> --token-id 123 --liquidity 1000 --min0 0 --min1 0
-sun liquidity v3:collect   --pm <addr> --token-id 123
+# Mint position (PM auto-detected, tick range auto-computed, single-token input)
+sun liquidity v3:mint --token0 TRX --token1 USDT --fee 3000 --amount0 1000000
+
+# With explicit tick range
+sun liquidity v3:mint --token0 TRX --token1 USDT --fee 3000 \
+                      --tick-lower -100 --tick-upper 100 --amount0 1000000
+
+# Increase/Decrease/Collect
+sun liquidity v3:increase --token-id 123 --amount0 500000
+sun liquidity v3:decrease --token-id 123 --liquidity 1000
+sun liquidity v3:collect --token-id 123
 ```
 
 ### Liquidity — V4
 
 ```bash
-sun liquidity v4:mint      --token0 <addr> --token1 <addr> --fee 3000 \
-                           --tick-lower -100 --tick-upper 100 --amount0 1000000 --amount1 2000000
-sun liquidity v4:increase  --token-id 123 --token0 <addr> --token1 <addr> --amount0 500000 --amount1 500000
-sun liquidity v4:decrease  --token-id 123 --liquidity 1000 --token0 <addr> --token1 <addr>
-sun liquidity v4:collect   --token-id 123
-sun liquidity v4:info      --pm <addr> --token-id 123
+# Mint position (tick range auto-computed, single-token input, supports --create-pool)
+sun liquidity v4:mint --token0 TRX --token1 USDT --amount0 1000000
+sun liquidity v4:mint --token0 TRX --token1 USDT --amount0 1000000 --create-pool  # Create pool if needed
+
+# With explicit tick range
+sun liquidity v4:mint --token0 TRX --token1 USDT --fee 500 \
+                      --tick-lower -100 --tick-upper 100 --amount0 1000000
+
+# Increase/Decrease/Collect
+sun liquidity v4:increase --token-id 123 --token0 TRX --token1 USDT --amount0 500000
+sun liquidity v4:decrease --token-id 123 --liquidity 1000 --token0 TRX --token1 USDT
+sun liquidity v4:collect --token-id 123
+sun liquidity v4:info --pm <addr> --token-id 123
 ```
 
 ### SunPump (Meme Token Trading)
@@ -273,13 +319,16 @@ sun --json wallet balances --tokens TRX --fields balance
 # 2. Get price
 sun --json price USDT --fields priceInUsd
 
-# 3. Preview swap (dry-run)
+# 3. Get swap quote (read-only)
+sun --json swap:quote TR7NHq... T9yD14... 1000000
+
+# 4. Preview swap (dry-run)
 sun --json --dry-run swap TR7NHq... T9yD14... 1000000
 
-# 4. Execute swap
+# 5. Execute swap
 sun --json --yes swap TR7NHq... T9yD14... 1000000
 
-# 5. Verify new balance
+# 6. Verify new balance
 sun --json wallet balances --tokens TRX --fields balance
 ```
 
@@ -297,7 +346,8 @@ A `SKILL.md` file is included for agent frameworks that support skill-based tool
 | `wallet select <name>` | write | Switch active wallet |
 | `price` | read | Token price lookup |
 | `swap` | write | Auto-routed token swap |
-| `swap:quote` | read | Quote exact input swap |
+| `swap:quote` | read | Get swap quote (high-level, auto-routing) |
+| `swap:quote-raw` | read | Quote via contract call (low-level) |
 | `swap:exact-input` | write | Low-level exact input swap |
 | `token list` | read | List tokens by protocol |
 | `token search <query>` | read | Search tokens by name/symbol |
