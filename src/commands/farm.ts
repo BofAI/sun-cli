@@ -2,9 +2,7 @@ import { Command } from 'commander'
 import { readApiAction } from '../lib/command'
 
 export function registerFarmCommands(program: Command) {
-  const farm = program
-    .command('farm')
-    .description('Farming pools and positions')
+  const farm = program.command('farm').description('Farming pools and positions')
 
   farm
     .command('list')
@@ -16,11 +14,12 @@ export function registerFarmCommands(program: Command) {
       await readApiAction({
         spinnerLabel: 'Fetching farms...',
         errorLabel: 'Failed to fetch farms',
-        execute: (api) => api.getFarms({
-          farmAddress: opts.farm,
-          pageNo: parseInt(opts.page),
-          pageSize: parseInt(opts.pageSize),
-        }),
+        execute: (api) =>
+          api.getFarms({
+            farmAddress: opts.farm,
+            pageNo: parseInt(opts.page),
+            pageSize: parseInt(opts.pageSize),
+          }),
         transform: (result: any) => result.data || result,
         tableConfig: {
           headers: ['Farm', 'Token0', 'Token1', 'APR', 'TVL'],
@@ -49,15 +48,16 @@ export function registerFarmCommands(program: Command) {
       await readApiAction({
         spinnerLabel: 'Fetching farm transactions...',
         errorLabel: 'Failed to fetch farm transactions',
-        execute: (api) => api.getFarmTransactions({
-          userAddress: opts.owner,
-          farmAddress: opts.farm,
-          farmTxType: opts.type,
-          startTime: opts.start,
-          endTime: opts.end,
-          pageNo: parseInt(opts.page),
-          pageSize: parseInt(opts.pageSize),
-        }),
+        execute: (api) =>
+          api.getFarmTransactions({
+            userAddress: opts.owner,
+            farmAddress: opts.farm,
+            farmTxType: opts.type,
+            startTime: opts.start,
+            endTime: opts.end,
+            pageNo: parseInt(opts.page),
+            pageSize: parseInt(opts.pageSize),
+          }),
         transform: (result: any) => result.data || result,
       })
     })
@@ -73,12 +73,13 @@ export function registerFarmCommands(program: Command) {
       await readApiAction({
         spinnerLabel: 'Fetching farm positions...',
         errorLabel: 'Failed to fetch farm positions',
-        execute: (api) => api.getFarmPositions({
-          userAddress: opts.owner,
-          farmAddress: opts.farm,
-          pageNo: parseInt(opts.page),
-          pageSize: parseInt(opts.pageSize),
-        }),
+        execute: (api) =>
+          api.getFarmPositions({
+            userAddress: opts.owner,
+            farmAddress: opts.farm,
+            pageNo: parseInt(opts.page),
+            pageSize: parseInt(opts.pageSize),
+          }),
         transform: (result: any) => result.data || result,
       })
     })

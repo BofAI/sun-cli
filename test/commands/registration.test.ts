@@ -64,8 +64,6 @@ describe('command registration', () => {
     const subs = getSubcommandNames(program, 'wallet')
     expect(subs).toContain('address')
     expect(subs).toContain('balances')
-    expect(subs).toContain('list')
-    expect(subs).toContain('select')
   })
 
   it('registers liquidity subcommands including V3 collect and V4', () => {

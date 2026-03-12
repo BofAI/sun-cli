@@ -45,9 +45,7 @@ export async function ensureWallet(): Promise<void> {
     _initialized = true
   }
   if (!isWalletConfigured()) {
-    throw new Error(
-      'Wallet required. Set TRON_PRIVATE_KEY, TRON_MNEMONIC, or AGENT_WALLET_PASSWORD.'
-    )
+    throw new Error('Wallet required. Set agent-wallet credentials before running this command.')
   }
 }
 

@@ -17,9 +17,7 @@ function resolveTokenForPoolQuery(input: string | undefined, network: string): s
 }
 
 export function registerPoolCommands(program: Command) {
-  const pool = program
-    .command('pool')
-    .description('Pool operations and analytics')
+  const pool = program.command('pool').description('Pool operations and analytics')
 
   pool
     .command('list')
@@ -38,15 +36,16 @@ export function registerPoolCommands(program: Command) {
       await readApiAction({
         spinnerLabel: 'Fetching pools...',
         errorLabel: 'Failed to fetch pools',
-        execute: (api) => api.getPools({
-          poolAddress: opts.address,
-          tokenAddress,
-          protocol: opts.protocol,
-          pageNo: parseInt(opts.page),
-          pageSize: parseInt(opts.pageSize),
-          sort: opts.sort,
-          filterBlackList: opts.blacklist !== false ? undefined : false,
-        }),
+        execute: (api) =>
+          api.getPools({
+            poolAddress: opts.address,
+            tokenAddress,
+            protocol: opts.protocol,
+            pageNo: parseInt(opts.page),
+            pageSize: parseInt(opts.pageSize),
+            sort: opts.sort,
+            filterBlackList: opts.blacklist !== false ? undefined : false,
+          }),
         transform: (result: any) => result.data || result,
         tableConfig: {
           headers: ['Pool', 'Token0', 'Token1', 'Protocol', 'TVL', 'APY'],
@@ -72,12 +71,13 @@ export function registerPoolCommands(program: Command) {
       await readApiAction({
         spinnerLabel: `Searching pools for "${keyword}"...`,
         errorLabel: 'Failed to search pools',
-        execute: (api) => api.searchPools({
-          query: keyword,
-          protocol: opts.protocol,
-          pageNo: parseInt(opts.page),
-          pageSize: parseInt(opts.pageSize),
-        }),
+        execute: (api) =>
+          api.searchPools({
+            query: keyword,
+            protocol: opts.protocol,
+            pageNo: parseInt(opts.page),
+            pageSize: parseInt(opts.pageSize),
+          }),
         transform: (result: any) => result.data || result,
         tableConfig: {
           headers: ['Pool', 'Token0', 'Token1', 'Protocol', 'TVL'],
@@ -102,10 +102,11 @@ export function registerPoolCommands(program: Command) {
       await readApiAction({
         spinnerLabel: 'Fetching top APY pools...',
         errorLabel: 'Failed to fetch top APY pools',
-        execute: (api) => api.getTopApyPoolList({
-          pageNo: parseInt(opts.page),
-          pageSize: parseInt(opts.pageSize),
-        }),
+        execute: (api) =>
+          api.getTopApyPoolList({
+            pageNo: parseInt(opts.page),
+            pageSize: parseInt(opts.pageSize),
+          }),
         transform: (result: any) => result.data || result,
         tableConfig: {
           headers: ['Pool', 'Token0', 'Token1', 'APY', 'TVL'],
@@ -141,15 +142,19 @@ export function registerPoolCommands(program: Command) {
       await readApiAction({
         spinnerLabel: 'Fetching pool volume history...',
         errorLabel: 'Failed to fetch pool volume history',
-        execute: (api) => api.getPoolVolHistory({
-          poolAddress,
-          startDate: opts.start,
-          endDate: opts.end,
-        }),
+        execute: (api) =>
+          api.getPoolVolHistory({
+            poolAddress,
+            startDate: opts.start,
+            endDate: opts.end,
+          }),
         transform: (result: any) => result.data || result,
         tableConfig: {
           headers: ['Date', 'Volume'],
-          toRow: (item: any) => [item.date || item.timestamp || '-', item.volume || item.vol || '-'],
+          toRow: (item: any) => [
+            item.date || item.timestamp || '-',
+            item.volume || item.vol || '-',
+          ],
         },
       })
     })
@@ -163,15 +168,19 @@ export function registerPoolCommands(program: Command) {
       await readApiAction({
         spinnerLabel: 'Fetching pool liquidity history...',
         errorLabel: 'Failed to fetch pool liquidity history',
-        execute: (api) => api.getPoolLiqHistory({
-          poolAddress,
-          startDate: opts.start,
-          endDate: opts.end,
-        }),
+        execute: (api) =>
+          api.getPoolLiqHistory({
+            poolAddress,
+            startDate: opts.start,
+            endDate: opts.end,
+          }),
         transform: (result: any) => result.data || result,
         tableConfig: {
           headers: ['Date', 'Liquidity'],
-          toRow: (item: any) => [item.date || item.timestamp || '-', item.liquidity || item.liq || '-'],
+          toRow: (item: any) => [
+            item.date || item.timestamp || '-',
+            item.liquidity || item.liq || '-',
+          ],
         },
       })
     })

@@ -1,4 +1,11 @@
-import { filterFields, extractList, setFields, setJsonMode, outputJson, outputError } from '../../src/lib/output'
+import {
+  filterFields,
+  extractList,
+  setFields,
+  setJsonMode,
+  outputJson,
+  outputError,
+} from '../../src/lib/output'
 
 describe('filterFields', () => {
   afterEach(() => setFields(null))

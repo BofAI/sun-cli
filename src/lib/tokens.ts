@@ -3,11 +3,7 @@
  * Provides a unified way to resolve token symbols to addresses across all commands.
  */
 
-import {
-  TRX_ADDRESS,
-  WTRX_MAINNET,
-  WTRX_NILE,
-} from '@bankofai/sun-kit'
+import { TRX_ADDRESS, WTRX_MAINNET, WTRX_NILE } from '@bankofai/sun-kit'
 
 export interface TokenInfo {
   symbol: string
@@ -76,8 +72,8 @@ export function resolveTokenAddress(input: string, network: string): string {
 
   throw new Error(
     `Unknown token symbol: ${input}. ` +
-    `Known symbols for ${network}: ${Object.keys(registry).join(', ')}. ` +
-    `Or use a token address directly.`
+      `Known symbols for ${network}: ${Object.keys(registry).join(', ')}. ` +
+      `Or use a token address directly.`,
   )
 }
 

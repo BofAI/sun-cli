@@ -2,12 +2,9 @@ import { Command } from 'commander'
 import { readApiAction } from '../lib/command'
 
 export function registerTxCommands(program: Command) {
-  const tx = program
-    .command('tx')
-    .description('Transaction history')
+  const tx = program.command('tx').description('Transaction history')
 
-  tx
-    .command('scan')
+  tx.command('scan')
     .description('Scan DEX transactions (swap/add/withdraw)')
     .option('--protocol <protocol>', 'Protocol filter')
     .option('--token <tokenAddress>', 'Token address filter')
@@ -21,16 +18,17 @@ export function registerTxCommands(program: Command) {
       await readApiAction({
         spinnerLabel: 'Scanning transactions...',
         errorLabel: 'Failed to scan transactions',
-        execute: (api) => api.scanTransactions({
-          protocol: opts.protocol,
-          tokenAddress: opts.token,
-          poolAddress: opts.pool,
-          type: opts.type as any,
-          startTime: opts.start,
-          endTime: opts.end,
-          pageSize: opts.pageSize ? parseInt(opts.pageSize) : undefined,
-          offset: opts.offset,
-        }),
+        execute: (api) =>
+          api.scanTransactions({
+            protocol: opts.protocol,
+            tokenAddress: opts.token,
+            poolAddress: opts.pool,
+            type: opts.type as any,
+            startTime: opts.start,
+            endTime: opts.end,
+            pageSize: opts.pageSize ? parseInt(opts.pageSize) : undefined,
+            offset: opts.offset,
+          }),
         transform: (result: any) => result.data || result,
         tableConfig: {
           headers: ['TxID', 'Type', 'Token0', 'Token1', 'Amount0', 'Amount1', 'Time'],

@@ -46,7 +46,9 @@ function getV3PositionManager(network: string, override?: string): string {
   if (override) return override
   const pm = V3_POSITION_MANAGERS[network]
   if (!pm) {
-    throw new Error(`V3 position manager not configured for network: ${network}. Use --pm to specify.`)
+    throw new Error(
+      `V3 position manager not configured for network: ${network}. Use --pm to specify.`,
+    )
   }
   return pm
 }
@@ -75,7 +77,7 @@ interface PairReserves {
 async function getV2PairReserves(
   network: string,
   tokenA: string,
-  tokenB: string
+  tokenB: string,
 ): Promise<PairReserves> {
   const tronWeb = await createReadonlyTronWeb(network)
   const factoryAddress = V2_FACTORIES[network]
@@ -112,7 +114,7 @@ async function getV2PairReserves(
 function calculateOptimalAmount(
   providedAmount: string,
   providedReserve: string,
-  otherReserve: string
+  otherReserve: string,
 ): string {
   const amount = BigInt(providedAmount)
   const rProvided = BigInt(providedReserve)
@@ -126,9 +128,7 @@ function calculateOptimalAmount(
 }
 
 export function registerLiquidityCommands(program: Command) {
-  const liq = program
-    .command('liquidity')
-    .description('V2, V3, and V4 liquidity management')
+  const liq = program.command('liquidity').description('V2, V3, and V4 liquidity management')
 
   // ---------------------------------------------------------------------------
   // V2
@@ -173,11 +173,13 @@ export function registerLiquidityCommands(program: Command) {
       if (!amountA || !amountB) {
         try {
           const reserves = await withSpinner('Fetching pool reserves...', () =>
-            getV2PairReserves(network, tokenA, tokenB)
+            getV2PairReserves(network, tokenA, tokenB),
           )
 
           if (!reserves.pairExists) {
-            console.error('Error: Pool does not exist. Please provide both --amount-a and --amount-b for initial liquidity.')
+            console.error(
+              'Error: Pool does not exist. Please provide both --amount-a and --amount-b for initial liquidity.',
+            )
             process.exitCode = 1
             return
           }
@@ -200,29 +202,30 @@ export function registerLiquidityCommands(program: Command) {
       await writeAction({
         title: 'V2 Add Liquidity',
         summary: {
-          'Router': router,
+          Router: router,
           'Token A': `${tokenADisplay} (${tokenA})`,
           'Token B': `${tokenBDisplay} (${tokenB})`,
           'Amount A': amountA,
           'Amount B': amountB,
-          'Network': network,
+          Network: network,
         },
         confirmMsg: 'Add V2 liquidity?',
         spinnerLabel: 'Adding V2 liquidity...',
         errorLabel: 'V2 add liquidity failed',
-        execute: (kit) => kit.addLiquidityV2({
-          network,
-          routerAddress: router,
-          abi: opts.abi ? JSON.parse(opts.abi) : undefined,
-          tokenA,
-          tokenB,
-          amountADesired: amountA,
-          amountBDesired: amountB,
-          amountAMin: opts.minA,
-          amountBMin: opts.minB,
-          to: opts.to,
-          deadline: opts.deadline,
-        }),
+        execute: (kit) =>
+          kit.addLiquidityV2({
+            network,
+            routerAddress: router,
+            abi: opts.abi ? JSON.parse(opts.abi) : undefined,
+            tokenA,
+            tokenB,
+            amountADesired: amountA,
+            amountBDesired: amountB,
+            amountAMin: opts.minA,
+            amountBMin: opts.minB,
+            to: opts.to,
+            deadline: opts.deadline,
+          }),
       })
     })
 
@@ -258,27 +261,28 @@ export function registerLiquidityCommands(program: Command) {
       await writeAction({
         title: 'V2 Remove Liquidity',
         summary: {
-          'Router': router,
+          Router: router,
           'Token A': `${tokenADisplay} (${tokenA})`,
           'Token B': `${tokenBDisplay} (${tokenB})`,
           'LP Tokens': opts.liquidity,
-          'Network': network,
+          Network: network,
         },
         confirmMsg: 'Remove V2 liquidity?',
         spinnerLabel: 'Removing V2 liquidity...',
         errorLabel: 'V2 remove liquidity failed',
-        execute: (kit) => kit.removeLiquidityV2({
-          network,
-          routerAddress: router,
-          abi: opts.abi ? JSON.parse(opts.abi) : undefined,
-          tokenA,
-          tokenB,
-          liquidity: opts.liquidity,
-          amountAMin: opts.minA,
-          amountBMin: opts.minB,
-          to: opts.to,
-          deadline: opts.deadline,
-        }),
+        execute: (kit) =>
+          kit.removeLiquidityV2({
+            network,
+            routerAddress: router,
+            abi: opts.abi ? JSON.parse(opts.abi) : undefined,
+            tokenA,
+            tokenB,
+            liquidity: opts.liquidity,
+            amountAMin: opts.minA,
+            amountBMin: opts.minB,
+            to: opts.to,
+            deadline: opts.deadline,
+          }),
       })
     })
 
@@ -330,41 +334,41 @@ export function registerLiquidityCommands(program: Command) {
       const token0Note = token0 !== token0Input ? ` → WTRX` : ''
       const token1Note = token1 !== token1Input ? ` → WTRX` : ''
 
-      const tickRange = opts.tickLower && opts.tickUpper
-        ? `[${opts.tickLower}, ${opts.tickUpper}]`
-        : '(auto)'
+      const tickRange =
+        opts.tickLower && opts.tickUpper ? `[${opts.tickLower}, ${opts.tickUpper}]` : '(auto)'
 
       await writeAction({
         title: 'V3 Mint Position',
         summary: {
           'Position Manager': pm,
-          'Token0': `${token0Display}${token0Note} (${token0})`,
-          'Token1': `${token1Display}${token1Note} (${token1})`,
-          'Fee': opts.fee || '3000 (default)',
+          Token0: `${token0Display}${token0Note} (${token0})`,
+          Token1: `${token1Display}${token1Note} (${token1})`,
+          Fee: opts.fee || '3000 (default)',
           'Tick Range': tickRange,
-          'Amount0': opts.amount0 || '(auto)',
-          'Amount1': opts.amount1 || '(auto)',
-          'Network': network,
+          Amount0: opts.amount0 || '(auto)',
+          Amount1: opts.amount1 || '(auto)',
+          Network: network,
         },
         confirmMsg: 'Mint V3 position?',
         spinnerLabel: 'Minting V3 position...',
         errorLabel: 'V3 mint failed',
-        execute: (kit) => kit.mintPositionV3({
-          network,
-          positionManagerAddress: pm,
-          abi: opts.abi ? JSON.parse(opts.abi) : undefined,
-          token0,
-          token1,
-          fee: opts.fee ? parseInt(opts.fee) : undefined,
-          tickLower: opts.tickLower ? parseInt(opts.tickLower) : undefined,
-          tickUpper: opts.tickUpper ? parseInt(opts.tickUpper) : undefined,
-          amount0Desired: opts.amount0,
-          amount1Desired: opts.amount1,
-          amount0Min: opts.min0,
-          amount1Min: opts.min1,
-          recipient: opts.recipient,
-          deadline: opts.deadline,
-        }),
+        execute: (kit) =>
+          kit.mintPositionV3({
+            network,
+            positionManagerAddress: pm,
+            abi: opts.abi ? JSON.parse(opts.abi) : undefined,
+            token0,
+            token1,
+            fee: opts.fee ? parseInt(opts.fee) : undefined,
+            tickLower: opts.tickLower ? parseInt(opts.tickLower) : undefined,
+            tickUpper: opts.tickUpper ? parseInt(opts.tickUpper) : undefined,
+            amount0Desired: opts.amount0,
+            amount1Desired: opts.amount1,
+            amount0Min: opts.min0,
+            amount1Min: opts.min1,
+            recipient: opts.recipient,
+            deadline: opts.deadline,
+          }),
       })
     })
 
@@ -394,24 +398,25 @@ export function registerLiquidityCommands(program: Command) {
         summary: {
           'Position Manager': pm,
           'Token ID': opts.tokenId,
-          'Amount0': opts.amount0 || '(auto)',
-          'Amount1': opts.amount1 || '(auto)',
-          'Network': network,
+          Amount0: opts.amount0 || '(auto)',
+          Amount1: opts.amount1 || '(auto)',
+          Network: network,
         },
         confirmMsg: 'Increase V3 liquidity?',
         spinnerLabel: 'Increasing V3 liquidity...',
         errorLabel: 'V3 increase liquidity failed',
-        execute: (kit) => kit.increaseLiquidityV3({
-          network,
-          positionManagerAddress: pm,
-          abi: opts.abi ? JSON.parse(opts.abi) : undefined,
-          tokenId: opts.tokenId,
-          amount0Desired: opts.amount0,
-          amount1Desired: opts.amount1,
-          amount0Min: opts.min0,
-          amount1Min: opts.min1,
-          deadline: opts.deadline,
-        }),
+        execute: (kit) =>
+          kit.increaseLiquidityV3({
+            network,
+            positionManagerAddress: pm,
+            abi: opts.abi ? JSON.parse(opts.abi) : undefined,
+            tokenId: opts.tokenId,
+            amount0Desired: opts.amount0,
+            amount1Desired: opts.amount1,
+            amount0Min: opts.min0,
+            amount1Min: opts.min1,
+            deadline: opts.deadline,
+          }),
       })
     })
 
@@ -434,22 +439,23 @@ export function registerLiquidityCommands(program: Command) {
         summary: {
           'Position Manager': pm,
           'Token ID': opts.tokenId,
-          'Liquidity': opts.liquidity,
-          'Network': network,
+          Liquidity: opts.liquidity,
+          Network: network,
         },
         confirmMsg: 'Decrease V3 liquidity?',
         spinnerLabel: 'Decreasing V3 liquidity...',
         errorLabel: 'V3 decrease liquidity failed',
-        execute: (kit) => kit.decreaseLiquidityV3({
-          network,
-          positionManagerAddress: pm,
-          abi: opts.abi ? JSON.parse(opts.abi) : undefined,
-          tokenId: opts.tokenId,
-          liquidity: opts.liquidity,
-          amount0Min: opts.min0,
-          amount1Min: opts.min1,
-          deadline: opts.deadline,
-        }),
+        execute: (kit) =>
+          kit.decreaseLiquidityV3({
+            network,
+            positionManagerAddress: pm,
+            abi: opts.abi ? JSON.parse(opts.abi) : undefined,
+            tokenId: opts.tokenId,
+            liquidity: opts.liquidity,
+            amount0Min: opts.min0,
+            amount1Min: opts.min1,
+            deadline: opts.deadline,
+          }),
       })
     })
 
@@ -469,19 +475,20 @@ export function registerLiquidityCommands(program: Command) {
         summary: {
           'Position Manager': pm,
           'Token ID': opts.tokenId,
-          'Recipient': opts.recipient || '(active wallet)',
-          'Network': network,
+          Recipient: opts.recipient || '(active wallet)',
+          Network: network,
         },
         confirmMsg: 'Collect V3 fees?',
         spinnerLabel: 'Collecting V3 fees...',
         errorLabel: 'V3 collect failed',
-        execute: (kit) => kit.collectPositionV3({
-          network,
-          positionManagerAddress: pm,
-          abi: opts.abi ? JSON.parse(opts.abi) : undefined,
-          tokenId: opts.tokenId,
-          recipient: opts.recipient,
-        }),
+        execute: (kit) =>
+          kit.collectPositionV3({
+            network,
+            positionManagerAddress: pm,
+            abi: opts.abi ? JSON.parse(opts.abi) : undefined,
+            tokenId: opts.tokenId,
+            recipient: opts.recipient,
+          }),
       })
     })
 
@@ -528,34 +535,38 @@ export function registerLiquidityCommands(program: Command) {
       await writeAction({
         title: 'V4 Mint Position',
         summary: {
-          'Token0': `${token0Display}${token0Note} (${token0})`,
-          'Token1': `${token1Display}${token1Note} (${token1})`,
-          'Fee': opts.fee || '(auto)',
-          'Tick Range': opts.tickLower && opts.tickUpper ? `[${opts.tickLower}, ${opts.tickUpper}]` : '(auto)',
-          'Amount0': opts.amount0 || '(auto)',
-          'Amount1': opts.amount1 || '(auto)',
-          'Slippage': opts.slippage ? `${(parseFloat(opts.slippage) * 100).toFixed(2)}%` : '(default)',
+          Token0: `${token0Display}${token0Note} (${token0})`,
+          Token1: `${token1Display}${token1Note} (${token1})`,
+          Fee: opts.fee || '(auto)',
+          'Tick Range':
+            opts.tickLower && opts.tickUpper ? `[${opts.tickLower}, ${opts.tickUpper}]` : '(auto)',
+          Amount0: opts.amount0 || '(auto)',
+          Amount1: opts.amount1 || '(auto)',
+          Slippage: opts.slippage
+            ? `${(parseFloat(opts.slippage) * 100).toFixed(2)}%`
+            : '(default)',
           'Create Pool': opts.createPool ? 'Yes' : 'No',
-          'Network': network,
+          Network: network,
         },
         confirmMsg: 'Mint V4 position?',
         spinnerLabel: 'Minting V4 position...',
         errorLabel: 'V4 mint failed',
-        execute: (kit) => kit.mintPositionV4({
-          network,
-          token0,
-          token1,
-          fee: opts.fee ? parseInt(opts.fee) : undefined,
-          tickLower: opts.tickLower ? parseInt(opts.tickLower) : undefined,
-          tickUpper: opts.tickUpper ? parseInt(opts.tickUpper) : undefined,
-          amount0Desired: opts.amount0,
-          amount1Desired: opts.amount1,
-          slippage: opts.slippage ? parseFloat(opts.slippage) : undefined,
-          recipient: opts.recipient,
-          deadline: opts.deadline,
-          sqrtPriceX96: opts.sqrtPrice,
-          createPoolIfNeeded: opts.createPool,
-        }),
+        execute: (kit) =>
+          kit.mintPositionV4({
+            network,
+            token0,
+            token1,
+            fee: opts.fee ? parseInt(opts.fee) : undefined,
+            tickLower: opts.tickLower ? parseInt(opts.tickLower) : undefined,
+            tickUpper: opts.tickUpper ? parseInt(opts.tickUpper) : undefined,
+            amount0Desired: opts.amount0,
+            amount1Desired: opts.amount1,
+            slippage: opts.slippage ? parseFloat(opts.slippage) : undefined,
+            recipient: opts.recipient,
+            deadline: opts.deadline,
+            sqrtPriceX96: opts.sqrtPrice,
+            createPoolIfNeeded: opts.createPool,
+          }),
       })
     })
 
@@ -593,26 +604,27 @@ export function registerLiquidityCommands(program: Command) {
         title: 'V4 Increase Liquidity',
         summary: {
           'Token ID': opts.tokenId,
-          'Token0': `${token0Display} (${token0})`,
-          'Token1': `${token1Display} (${token1})`,
-          'Amount0': opts.amount0 || '(auto)',
-          'Amount1': opts.amount1 || '(auto)',
-          'Network': network,
+          Token0: `${token0Display} (${token0})`,
+          Token1: `${token1Display} (${token1})`,
+          Amount0: opts.amount0 || '(auto)',
+          Amount1: opts.amount1 || '(auto)',
+          Network: network,
         },
         confirmMsg: 'Increase V4 liquidity?',
         spinnerLabel: 'Increasing V4 liquidity...',
         errorLabel: 'V4 increase liquidity failed',
-        execute: (kit) => kit.increaseLiquidityV4({
-          network,
-          tokenId: opts.tokenId,
-          token0,
-          token1,
-          fee: opts.fee ? parseInt(opts.fee) : undefined,
-          amount0Desired: opts.amount0,
-          amount1Desired: opts.amount1,
-          slippage: opts.slippage ? parseFloat(opts.slippage) : undefined,
-          deadline: opts.deadline,
-        }),
+        execute: (kit) =>
+          kit.increaseLiquidityV4({
+            network,
+            tokenId: opts.tokenId,
+            token0,
+            token1,
+            fee: opts.fee ? parseInt(opts.fee) : undefined,
+            amount0Desired: opts.amount0,
+            amount1Desired: opts.amount1,
+            slippage: opts.slippage ? parseFloat(opts.slippage) : undefined,
+            deadline: opts.deadline,
+          }),
       })
     })
 
@@ -651,26 +663,27 @@ export function registerLiquidityCommands(program: Command) {
         title: 'V4 Decrease Liquidity',
         summary: {
           'Token ID': opts.tokenId,
-          'Liquidity': opts.liquidity,
-          'Token0': `${token0Display} (${token0})`,
-          'Token1': `${token1Display} (${token1})`,
-          'Network': network,
+          Liquidity: opts.liquidity,
+          Token0: `${token0Display} (${token0})`,
+          Token1: `${token1Display} (${token1})`,
+          Network: network,
         },
         confirmMsg: 'Decrease V4 liquidity?',
         spinnerLabel: 'Decreasing V4 liquidity...',
         errorLabel: 'V4 decrease liquidity failed',
-        execute: (kit) => kit.decreaseLiquidityV4({
-          network,
-          tokenId: opts.tokenId,
-          liquidity: opts.liquidity,
-          token0,
-          token1,
-          fee: opts.fee ? parseInt(opts.fee) : undefined,
-          amount0Min: opts.min0,
-          amount1Min: opts.min1,
-          slippage: opts.slippage ? parseFloat(opts.slippage) : undefined,
-          deadline: opts.deadline,
-        }),
+        execute: (kit) =>
+          kit.decreaseLiquidityV4({
+            network,
+            tokenId: opts.tokenId,
+            liquidity: opts.liquidity,
+            token0,
+            token1,
+            fee: opts.fee ? parseInt(opts.fee) : undefined,
+            amount0Min: opts.min0,
+            amount1Min: opts.min1,
+            slippage: opts.slippage ? parseFloat(opts.slippage) : undefined,
+            deadline: opts.deadline,
+          }),
       })
     })
 
@@ -711,21 +724,22 @@ export function registerLiquidityCommands(program: Command) {
         title: 'V4 Collect Fees',
         summary: {
           'Token ID': opts.tokenId,
-          'Token0': token0 || '(auto)',
-          'Token1': token1 || '(auto)',
-          'Network': network,
+          Token0: token0 || '(auto)',
+          Token1: token1 || '(auto)',
+          Network: network,
         },
         confirmMsg: 'Collect V4 fees?',
         spinnerLabel: 'Collecting V4 fees...',
         errorLabel: 'V4 collect failed',
-        execute: (kit) => kit.collectPositionV4({
-          network,
-          tokenId: opts.tokenId,
-          token0,
-          token1,
-          fee: opts.fee ? parseInt(opts.fee) : undefined,
-          deadline: opts.deadline,
-        }),
+        execute: (kit) =>
+          kit.collectPositionV4({
+            network,
+            tokenId: opts.tokenId,
+            token0,
+            token1,
+            fee: opts.fee ? parseInt(opts.fee) : undefined,
+            deadline: opts.deadline,
+          }),
       })
     })
 

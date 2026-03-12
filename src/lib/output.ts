@@ -19,14 +19,26 @@ export type OutputFormat = 'table' | 'json' | 'tsv'
 let _outputFormat: OutputFormat = 'table'
 let _fields: string[] | null = null
 
-export function setOutputFormat(fmt: OutputFormat) { _outputFormat = fmt }
-export function getOutputFormat(): OutputFormat { return _outputFormat }
+export function setOutputFormat(fmt: OutputFormat) {
+  _outputFormat = fmt
+}
+export function getOutputFormat(): OutputFormat {
+  return _outputFormat
+}
 /** Convenience: --json flag sets format to 'json' */
-export function setJsonMode(on: boolean) { if (on) _outputFormat = 'json' }
+export function setJsonMode(on: boolean) {
+  if (on) _outputFormat = 'json'
+}
 /** Returns true for json and tsv (both are machine-readable, suppress spinners/diagnostics) */
-export function isJsonMode(): boolean { return _outputFormat !== 'table' }
-export function setFields(f: string[] | null) { _fields = f }
-export function getFields(): string[] | null { return _fields }
+export function isJsonMode(): boolean {
+  return _outputFormat !== 'table'
+}
+export function setFields(f: string[] | null) {
+  _fields = f
+}
+export function getFields(): string[] | null {
+  return _fields
+}
 
 // ---------------------------------------------------------------------------
 // Field filtering
@@ -36,7 +48,7 @@ export function filterFields(obj: any): any {
   if (!_fields || !_fields.length) return obj
 
   if (Array.isArray(obj)) {
-    return obj.map(item => filterFields(item))
+    return obj.map((item) => filterFields(item))
   }
 
   if (obj && typeof obj === 'object') {
@@ -61,15 +73,24 @@ export function outputJson(data: unknown) {
 
 function classifyError(message: string, error?: unknown): string {
   // Prefer error object's own code (e.g. SunKitError.code)
-  if (error && typeof error === 'object' && 'code' in error && typeof (error as any).code === 'string') {
+  if (
+    error &&
+    typeof error === 'object' &&
+    'code' in error &&
+    typeof (error as any).code === 'string'
+  ) {
     return (error as any).code
   }
   const msg = (message + ' ' + (error instanceof Error ? error.message : '')).toLowerCase()
-  if (msg.includes('wallet') || msg.includes('private key') || msg.includes('mnemonic')) return 'WALLET_NOT_CONFIGURED'
-  if (msg.includes('invalid') || msg.includes('must be') || msg.includes('required')) return 'INVALID_PARAMS'
+  if (msg.includes('wallet') || msg.includes('private key') || msg.includes('mnemonic'))
+    return 'WALLET_NOT_CONFIGURED'
+  if (msg.includes('invalid') || msg.includes('must be') || msg.includes('required'))
+    return 'INVALID_PARAMS'
   if (msg.includes('broadcast') || msg.includes('transaction failed')) return 'TX_FAILED'
-  if (msg.includes('timeout') || msg.includes('econnrefused') || msg.includes('fetch failed')) return 'NETWORK_ERROR'
-  if (msg.includes('not found') || msg.includes('not exist') || msg.includes('no route')) return 'NOT_FOUND'
+  if (msg.includes('timeout') || msg.includes('econnrefused') || msg.includes('fetch failed'))
+    return 'NETWORK_ERROR'
+  if (msg.includes('not found') || msg.includes('not exist') || msg.includes('no route'))
+    return 'NOT_FOUND'
   return 'UNKNOWN_ERROR'
 }
 
@@ -124,7 +145,7 @@ export function printTable(headers: string[], rows: string[][]) {
   if (isJsonMode()) return
 
   const table = new Table({
-    head: headers.map(h => chalk.bold.white(h)),
+    head: headers.map((h) => chalk.bold.white(h)),
     style: { head: [], border: ['gray'] },
     wordWrap: true,
   })
@@ -156,10 +177,13 @@ export function extractList(data: any): any[] | null {
   return null
 }
 
-export function output(data: unknown, tableConfig?: {
-  headers: string[]
-  toRow: (item: any) => string[]
-}) {
+export function output(
+  data: unknown,
+  tableConfig?: {
+    headers: string[]
+    toRow: (item: any) => string[]
+  },
+) {
   if (_outputFormat === 'json') {
     outputJson(data)
     return
@@ -237,7 +261,7 @@ export function printKeyValue(pairs: Record<string, unknown>) {
     return
   }
 
-  const maxKey = Math.max(...Object.keys(pairs).map(k => k.length))
+  const maxKey = Math.max(...Object.keys(pairs).map((k) => k.length))
   for (const [key, value] of Object.entries(pairs)) {
     const label = chalk.bold(key.padEnd(maxKey))
     console.log(`  ${label}  ${value}`)

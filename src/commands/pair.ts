@@ -2,9 +2,7 @@ import { Command } from 'commander'
 import { readApiAction } from '../lib/command'
 
 export function registerPairCommands(program: Command) {
-  const pair = program
-    .command('pair')
-    .description('Token pair information')
+  const pair = program.command('pair').description('Token pair information')
 
   pair
     .command('info')
@@ -17,12 +15,13 @@ export function registerPairCommands(program: Command) {
       await readApiAction({
         spinnerLabel: 'Fetching pair info...',
         errorLabel: 'Failed to fetch pair info',
-        execute: (api) => api.getPairs({
-          tokenAddress: opts.token,
-          protocol: opts.protocol,
-          pageNo: parseInt(opts.page),
-          pageSize: parseInt(opts.pageSize),
-        }),
+        execute: (api) =>
+          api.getPairs({
+            tokenAddress: opts.token,
+            protocol: opts.protocol,
+            pageNo: parseInt(opts.page),
+            pageSize: parseInt(opts.pageSize),
+          }),
         transform: (result: any) => result.data || result,
         tableConfig: {
           headers: ['Pool', 'Token0', 'Token1', 'Protocol', 'TVL'],

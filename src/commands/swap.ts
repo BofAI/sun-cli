@@ -21,7 +21,7 @@ async function fetchSwapQuote(
   tokenIn: string,
   tokenOut: string,
   amountIn: string,
-  network: string
+  network: string,
 ): Promise<RouteData[]> {
   const baseUrl = ROUTER_API[network]
   if (!baseUrl) {
@@ -45,7 +45,7 @@ async function fetchSwapQuote(
     throw new Error(`Router API HTTP error: ${response.status}`)
   }
 
-  const data = await response.json() as { code: number; message?: string; data?: RouteData[] }
+  const data = (await response.json()) as { code: number; message?: string; data?: RouteData[] }
   if (data.code !== 0) {
     throw new Error(`Router API error: ${data.message || 'Unknown error'}`)
   }
@@ -81,8 +81,8 @@ export function registerSwapCommands(program: Command) {
           'Token In': `${tokenInDisplay} (${tokenIn})`,
           'Token Out': `${tokenOutDisplay} (${tokenOut})`,
           'Amount In': amountIn,
-          'Slippage': `${(slippage * 100).toFixed(2)}%`,
-          'Network': network,
+          Slippage: `${(slippage * 100).toFixed(2)}%`,
+          Network: network,
         },
         confirmMsg: 'Execute this swap?',
         spinnerLabel: 'Executing swap...',
@@ -94,6 +94,9 @@ export function registerSwapCommands(program: Command) {
             console.log()
             console.log(chalk.green('Swap executed successfully'))
             console.log(`  TxID: ${chalk.bold(result.txid)}`)
+            if (result.tronscanUrl) {
+              console.log(`  Tronscan: ${chalk.underline(result.tronscanUrl)}`)
+            }
             if (result.route) {
               console.log(`  Route: ${result.route.symbols?.join(' → ')}`)
               console.log(`  Amount Out: ${result.route.amountOut}`)
@@ -122,7 +125,7 @@ export function registerSwapCommands(program: Command) {
         }
 
         const routes = await withSpinner('Fetching quote...', () =>
-          fetchSwapQuote(tokenIn, tokenOut, amountIn, network)
+          fetchSwapQuote(tokenIn, tokenOut, amountIn, network),
         )
 
         if (!routes || routes.length === 0) {
@@ -155,7 +158,9 @@ export function registerSwapCommands(program: Command) {
 
           if (!opts.all && routes.length > 1) {
             console.log()
-            console.log(chalk.gray(`  (${routes.length - 1} more route(s) available, use --all to see them)`))
+            console.log(
+              chalk.gray(`  (${routes.length - 1} more route(s) available, use --all to see them)`),
+            )
           }
         }
       } catch (err: any) {
@@ -174,13 +179,14 @@ export function registerSwapCommands(program: Command) {
       await readAction({
         spinnerLabel: 'Quoting swap...',
         errorLabel: 'Quote failed',
-        execute: (kit) => kit.quoteExactInput({
-          network: getNetwork(),
-          routerAddress: opts.router,
-          functionName: opts.fn,
-          args: JSON.parse(opts.args),
-          abi: opts.abi ? JSON.parse(opts.abi) : undefined,
-        }),
+        execute: (kit) =>
+          kit.quoteExactInput({
+            network: getNetwork(),
+            routerAddress: opts.router,
+            functionName: opts.fn,
+            args: JSON.parse(opts.args),
+            abi: opts.abi ? JSON.parse(opts.abi) : undefined,
+          }),
         transform: (result) => ({ result }),
       })
     })
@@ -197,22 +203,23 @@ export function registerSwapCommands(program: Command) {
       await writeAction({
         title: 'SwapExactInput',
         summary: {
-          'Router': opts.router,
-          'Function': opts.fn,
-          'Args': opts.args,
-          'Value': opts.value || '0',
+          Router: opts.router,
+          Function: opts.fn,
+          Args: opts.args,
+          Value: opts.value || '0',
         },
         confirmMsg: 'Execute this swap?',
         spinnerLabel: 'Executing swap...',
         errorLabel: 'SwapExactInput failed',
-        execute: (kit) => kit.swapExactInput({
-          network: getNetwork(),
-          routerAddress: opts.router,
-          functionName: opts.fn,
-          args: JSON.parse(opts.args),
-          value: opts.value,
-          abi: opts.abi ? JSON.parse(opts.abi) : undefined,
-        }),
+        execute: (kit) =>
+          kit.swapExactInput({
+            network: getNetwork(),
+            routerAddress: opts.router,
+            functionName: opts.fn,
+            args: JSON.parse(opts.args),
+            value: opts.value,
+            abi: opts.abi ? JSON.parse(opts.abi) : undefined,
+          }),
       })
     })
 }

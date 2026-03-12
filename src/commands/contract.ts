@@ -16,10 +16,16 @@ export function registerContractCommands(program: Command) {
       await readAction({
         spinnerLabel: `Reading ${functionName}...`,
         errorLabel: 'Contract read failed',
-        execute: (kit) => kit.readContract(
-          { address, functionName, args: JSON.parse(opts.args), abi: opts.abi ? JSON.parse(opts.abi) : undefined },
-          getNetwork(),
-        ),
+        execute: (kit) =>
+          kit.readContract(
+            {
+              address,
+              functionName,
+              args: JSON.parse(opts.args),
+              abi: opts.abi ? JSON.parse(opts.abi) : undefined,
+            },
+            getNetwork(),
+          ),
         transform: (result) => ({ result }),
       })
     })
@@ -34,23 +40,24 @@ export function registerContractCommands(program: Command) {
       await writeAction({
         title: 'Contract Transaction',
         summary: {
-          'Contract': address,
-          'Function': functionName,
-          'Args': opts.args,
-          'Value': opts.value || '0',
-          'Network': getNetwork(),
+          Contract: address,
+          Function: functionName,
+          Args: opts.args,
+          Value: opts.value || '0',
+          Network: getNetwork(),
         },
         confirmMsg: 'Send this transaction?',
         spinnerLabel: `Sending ${functionName}...`,
         errorLabel: 'Contract send failed',
-        execute: (kit) => kit.sendContractTx({
-          address,
-          functionName,
-          args: JSON.parse(opts.args),
-          value: opts.value,
-          abi: opts.abi ? JSON.parse(opts.abi) : undefined,
-          network: getNetwork(),
-        }),
+        execute: (kit) =>
+          kit.sendContractTx({
+            address,
+            functionName,
+            args: JSON.parse(opts.args),
+            value: opts.value,
+            abi: opts.abi ? JSON.parse(opts.abi) : undefined,
+            network: getNetwork(),
+          }),
       })
     })
 }

@@ -2,9 +2,7 @@ import { Command } from 'commander'
 import { readApiAction } from '../lib/command'
 
 export function registerTokenCommands(program: Command) {
-  const token = program
-    .command('token')
-    .description('Token lookup and search')
+  const token = program.command('token').description('Token lookup and search')
 
   token
     .command('list')
@@ -19,14 +17,15 @@ export function registerTokenCommands(program: Command) {
       await readApiAction({
         spinnerLabel: 'Fetching tokens...',
         errorLabel: 'Failed to fetch tokens',
-        execute: (api) => api.getTokens({
-          tokenAddress: opts.address,
-          protocol: opts.protocol,
-          pageNo: parseInt(opts.page),
-          pageSize: parseInt(opts.pageSize),
-          sort: opts.sort,
-          filterBlackList: opts.blacklist !== false ? undefined : false,
-        }),
+        execute: (api) =>
+          api.getTokens({
+            tokenAddress: opts.address,
+            protocol: opts.protocol,
+            pageNo: parseInt(opts.page),
+            pageSize: parseInt(opts.pageSize),
+            sort: opts.sort,
+            filterBlackList: opts.blacklist !== false ? undefined : false,
+          }),
         transform: (result: any) => result.data || result,
         tableConfig: {
           headers: ['Symbol', 'Address', 'Volume (24h)', 'Price'],
@@ -50,12 +49,13 @@ export function registerTokenCommands(program: Command) {
       await readApiAction({
         spinnerLabel: `Searching tokens for "${keyword}"...`,
         errorLabel: 'Failed to search tokens',
-        execute: (api) => api.searchTokens({
-          query: keyword,
-          protocol: opts.protocol,
-          pageNo: parseInt(opts.page),
-          pageSize: parseInt(opts.pageSize),
-        }),
+        execute: (api) =>
+          api.searchTokens({
+            query: keyword,
+            protocol: opts.protocol,
+            pageNo: parseInt(opts.page),
+            pageSize: parseInt(opts.pageSize),
+          }),
         transform: (result: any) => result.data || result,
         tableConfig: {
           headers: ['Symbol', 'Address', 'Volume (24h)', 'Price'],

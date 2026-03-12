@@ -2,9 +2,7 @@ import { Command } from 'commander'
 import { readApiAction } from '../lib/command'
 
 export function registerPositionCommands(program: Command) {
-  const position = program
-    .command('position')
-    .description('Liquidity position queries')
+  const position = program.command('position').description('Liquidity position queries')
 
   position
     .command('list')
@@ -18,13 +16,14 @@ export function registerPositionCommands(program: Command) {
       await readApiAction({
         spinnerLabel: 'Fetching positions...',
         errorLabel: 'Failed to fetch positions',
-        execute: (api) => api.getUserPositions({
-          userAddress: opts.owner,
-          poolAddress: opts.pool,
-          protocol: opts.protocol,
-          pageNo: parseInt(opts.page),
-          pageSize: parseInt(opts.pageSize),
-        }),
+        execute: (api) =>
+          api.getUserPositions({
+            userAddress: opts.owner,
+            poolAddress: opts.pool,
+            protocol: opts.protocol,
+            pageNo: parseInt(opts.page),
+            pageSize: parseInt(opts.pageSize),
+          }),
         transform: (result: any) => result.data || result,
         tableConfig: {
           headers: ['Pool', 'Protocol', 'Token0', 'Token1', 'Liquidity'],
@@ -48,11 +47,12 @@ export function registerPositionCommands(program: Command) {
       await readApiAction({
         spinnerLabel: 'Fetching position ticks...',
         errorLabel: 'Failed to fetch position ticks',
-        execute: (api) => api.getPoolUserPositionTick({
-          poolAddress,
-          pageNo: parseInt(opts.page),
-          pageSize: parseInt(opts.pageSize),
-        }),
+        execute: (api) =>
+          api.getPoolUserPositionTick({
+            poolAddress,
+            pageNo: parseInt(opts.page),
+            pageSize: parseInt(opts.pageSize),
+          }),
         transform: (result: any) => result.data || result,
       })
     })
