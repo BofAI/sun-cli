@@ -17,7 +17,6 @@ import { registerPairCommands } from './commands/pair'
 import { registerFarmCommands } from './commands/farm'
 import { registerLiquidityCommands } from './commands/liquidity'
 import { registerContractCommands } from './commands/contract'
-import { registerSunpumpCommands } from './commands/sunpump'
 
 const program = new Command()
 
@@ -53,7 +52,6 @@ registerPairCommands(program)
 registerFarmCommands(program)
 registerLiquidityCommands(program)
 registerContractCommands(program)
-registerSunpumpCommands(program)
 
 program.parseAsync(process.argv).catch(err => {
   process.stderr.write(`${err.message}\n`)

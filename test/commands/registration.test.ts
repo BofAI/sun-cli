@@ -11,7 +11,6 @@ import { registerPairCommands } from '../../src/commands/pair'
 import { registerFarmCommands } from '../../src/commands/farm'
 import { registerLiquidityCommands } from '../../src/commands/liquidity'
 import { registerContractCommands } from '../../src/commands/contract'
-import { registerSunpumpCommands } from '../../src/commands/sunpump'
 
 function getCommandNames(program: Command): string[] {
   return program.commands.map((cmd) => cmd.name())
@@ -44,7 +43,6 @@ describe('command registration', () => {
     registerFarmCommands(program)
     registerLiquidityCommands(program)
     registerContractCommands(program)
-    registerSunpumpCommands(program)
 
     const names = getCommandNames(program)
     expect(names).toContain('wallet')
@@ -59,7 +57,6 @@ describe('command registration', () => {
     expect(names).toContain('farm')
     expect(names).toContain('liquidity')
     expect(names).toContain('contract')
-    expect(names).toContain('sunpump')
   })
 
   it('registers wallet subcommands', () => {
@@ -88,18 +85,6 @@ describe('command registration', () => {
     expect(subs).toContain('v4:decrease')
     expect(subs).toContain('v4:collect')
     expect(subs).toContain('v4:info')
-  })
-
-  it('registers sunpump subcommands', () => {
-    registerSunpumpCommands(program)
-    const subs = getSubcommandNames(program, 'sunpump')
-    expect(subs).toContain('buy')
-    expect(subs).toContain('sell')
-    expect(subs).toContain('quote:buy')
-    expect(subs).toContain('quote:sell')
-    expect(subs).toContain('info')
-    expect(subs).toContain('state')
-    expect(subs).toContain('price')
   })
 
   it('registers pool subcommands', () => {
