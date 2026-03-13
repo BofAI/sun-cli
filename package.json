@@ -37,6 +37,9 @@
     "ai-agent"
   ],
   "license": "MIT",
+  "overrides": {
+    "utf-8-validate": "5.0.10"
+  },
   "dependencies": {
     "@bankofai/agent-wallet": "^2.2.0",
     "@bankofai/sun-kit": "^0.1.0-beta.1",
