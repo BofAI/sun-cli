@@ -11,6 +11,7 @@ export interface TokenInfo {
   decimals: number
 }
 
+// Mainnet tokens (aligned with common_tokens.json + common extras)
 const MAINNET_TOKENS: Record<string, TokenInfo> = {
   TRX: { symbol: 'TRX', address: TRX_ADDRESS, decimals: 6 },
   WTRX: { symbol: 'WTRX', address: WTRX_MAINNET, decimals: 6 },
@@ -26,10 +27,16 @@ const MAINNET_TOKENS: Record<string, TokenInfo> = {
   USDJ: { symbol: 'USDJ', address: 'TMwFHYXLJaRUPeW6421aqXL4ZEzPRFGkGT', decimals: 18 },
 }
 
+// Nile testnet tokens (from common_tokens.json)
 const NILE_TOKENS: Record<string, TokenInfo> = {
   TRX: { symbol: 'TRX', address: TRX_ADDRESS, decimals: 6 },
   WTRX: { symbol: 'WTRX', address: WTRX_NILE, decimals: 6 },
   USDT: { symbol: 'USDT', address: 'TXYZopYRdj2D9XRtbG411XZZ3kM5VkAeBf', decimals: 6 },
+  USDC: { symbol: 'USDC', address: 'TWMCMCoJPqCGw5RR7eChF2HoY3a9B8eYA3', decimals: 6 },
+  SUN: { symbol: 'SUN', address: 'TWrZRHY9aKQZcyjpovdH6qeCEyYZrRQDZt', decimals: 18 },
+  USDJ: { symbol: 'USDJ', address: 'TLBaRhANQoJFTqre9Nf1mjuwNWjCJeYqUL', decimals: 18 },
+  TUSD: { symbol: 'TUSD', address: 'TRz7J6dD2QWxBoumfYt4b3FaiRG23pXfop', decimals: 18 },
+  JST: { symbol: 'JST', address: 'TF17BgPaZYbz8oxbjhriubPDsA7ArKoLX3', decimals: 18 },
 }
 
 const TOKEN_REGISTRY: Record<string, Record<string, TokenInfo>> = {
