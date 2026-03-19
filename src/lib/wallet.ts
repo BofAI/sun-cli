@@ -8,9 +8,14 @@ export type { Wallet }
 let _wallet: Wallet | null = null
 
 export async function initWallet(): Promise<void> {
-  const privateKey = process.env.TRON_PRIVATE_KEY?.trim() ?? ''
-  const mnemonic = process.env.TRON_MNEMONIC?.trim() ?? ''
-  const accountIndex = process.env.TRON_MNEMONIC_ACCOUNT_INDEX?.trim() ?? ''
+  const privateKey =
+    process.env.AGENT_WALLET_PRIVATE_KEY?.trim() || process.env.TRON_PRIVATE_KEY?.trim() || ''
+  const mnemonic =
+    process.env.AGENT_WALLET_MNEMONIC?.trim() || process.env.TRON_MNEMONIC?.trim() || ''
+  const accountIndex =
+    process.env.AGENT_WALLET_MNEMONIC_ACCOUNT_INDEX?.trim() ||
+    process.env.TRON_MNEMONIC_ACCOUNT_INDEX?.trim() ||
+    ''
   const walletPassword = process.env.AGENT_WALLET_PASSWORD?.trim() ?? ''
   const walletDir = process.env.AGENT_WALLET_DIR?.trim() ?? ''
   const configuredModes = [privateKey, mnemonic, walletPassword].filter(Boolean).length
