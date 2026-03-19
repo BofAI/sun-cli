@@ -164,14 +164,21 @@ export AGENT_WALLET_DIR=/absolute/path/to/.agent   # optional, defaults to ~/.ag
 **Option 2: Private key**
 
 ```bash
+export AGENT_WALLET_PRIVATE_KEY=your_private_key
+# or
 export TRON_PRIVATE_KEY=your_private_key
 ```
 
 **Option 3: Mnemonic**
 
 ```bash
+export AGENT_WALLET_MNEMONIC="word1 word2 word3 ..."
+# or
 export TRON_MNEMONIC="word1 word2 word3 ..."
-export TRON_MNEMONIC_ACCOUNT_INDEX=0   # optional
+
+export AGENT_WALLET_MNEMONIC_ACCOUNT_INDEX=0   # optional, default 0
+# or
+export TRON_MNEMONIC_ACCOUNT_INDEX=0            # optional, default 0
 ```
 
 > **Note**
