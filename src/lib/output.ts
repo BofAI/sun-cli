@@ -68,7 +68,9 @@ export function filterFields(obj: any): any {
 
 export function outputJson(data: unknown) {
   const filtered = filterFields(data)
-  process.stdout.write(JSON.stringify(filtered) + '\n')
+  process.stdout.write(
+    JSON.stringify(filtered, (_, v) => (typeof v === 'bigint' ? v.toString() : v)) + '\n',
+  )
 }
 
 function classifyError(message: string, error?: unknown): string {

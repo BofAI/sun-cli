@@ -57,6 +57,7 @@ describe('command registration', () => {
     expect(names).toContain('farm')
     expect(names).toContain('liquidity')
     expect(names).toContain('contract')
+    expect(names).not.toContain('sunpump')
   })
 
   it('registers wallet subcommands', () => {

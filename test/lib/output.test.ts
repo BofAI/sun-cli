@@ -98,8 +98,22 @@ describe('outputJson compact format', () => {
   it('outputs compact JSON without pretty-printing', () => {
     outputJson({ key: 'value', nested: { a: 1 } })
     expect(stdoutData).toBe('{"key":"value","nested":{"a":1}}\n')
-    // No spaces or newlines inside the JSON
     expect(stdoutData).not.toContain('  ')
+  })
+
+  it('serializes BigInt values as strings', () => {
+    outputJson({ amount: BigInt('1000000'), nested: { fee: 500n } })
+    const parsed = JSON.parse(stdoutData)
+    expect(parsed.amount).toBe('1000000')
+    expect(parsed.nested.fee).toBe('500')
+  })
+
+  it('handles mixed BigInt and regular values', () => {
+    outputJson({ name: 'TRX', balance: 123456789n, active: true })
+    const parsed = JSON.parse(stdoutData)
+    expect(parsed.name).toBe('TRX')
+    expect(parsed.balance).toBe('123456789')
+    expect(parsed.active).toBe(true)
   })
 })
 
