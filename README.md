@@ -165,20 +165,14 @@ export AGENT_WALLET_DIR=/absolute/path/to/.agent   # optional, defaults to ~/.ag
 
 ```bash
 export AGENT_WALLET_PRIVATE_KEY=your_private_key
-# or
-export TRON_PRIVATE_KEY=your_private_key
 ```
 
 **Option 3: Mnemonic**
 
 ```bash
 export AGENT_WALLET_MNEMONIC="word1 word2 word3 ..."
-# or
-export TRON_MNEMONIC="word1 word2 word3 ..."
 
 export AGENT_WALLET_MNEMONIC_ACCOUNT_INDEX=0   # optional, default 0
-# or
-export TRON_MNEMONIC_ACCOUNT_INDEX=0            # optional, default 0
 ```
 
 > **Note**
@@ -339,9 +333,9 @@ All commands inherit these root-level flags:
 | `--json`                                 | Shortcut for JSON output                                   |
 | `--fields <list>`                        | Comma-separated output field filter                        |
 | `--network <network>`                    | Override `TRON_NETWORK`                                    |
-| `-k, --private-key <key>`                | Override `TRON_PRIVATE_KEY` for this invocation            |
-| `-m, --mnemonic <phrase>`                | Override `TRON_MNEMONIC` for this invocation               |
-| `-i, --mnemonic-account-index <index>`   | Override `TRON_MNEMONIC_ACCOUNT_INDEX` for this invocation |
+| `-k, --private-key <key>`                | Provide a private key for this invocation only             |
+| `-m, --mnemonic <phrase>`                | Provide a mnemonic for this invocation only                |
+| `-i, --mnemonic-account-index <index>`   | Provide a mnemonic account index for this invocation only  |
 | `-p, --agent-wallet-password <password>` | Override `AGENT_WALLET_PASSWORD` for this invocation       |
 | `-d, --agent-wallet-dir <dir>`           | Override `AGENT_WALLET_DIR` for this invocation            |
 | `-y, --yes`                              | Skip confirmation prompts                                  |
@@ -418,8 +412,8 @@ npm run start -- --network nile swap TRX USDT 1000000
 
 Set exactly one wallet source:
 
-- `TRON_PRIVATE_KEY`
-- `TRON_MNEMONIC`
+- `AGENT_WALLET_PRIVATE_KEY`
+- `AGENT_WALLET_MNEMONIC`
 - `AGENT_WALLET_PASSWORD`
 
 Or provide the equivalent root-level flag for that invocation.
@@ -439,7 +433,7 @@ Use `swap:quote` first and then retry with `--yes` only after the quote looks co
 
 ## Security Considerations
 
-- Treat `TRON_PRIVATE_KEY`, `TRON_MNEMONIC`, and `AGENT_WALLET_PASSWORD` as secrets.
+- Treat `AGENT_WALLET_PRIVATE_KEY`, `AGENT_WALLET_MNEMONIC`, and `AGENT_WALLET_PASSWORD` as secrets.
 - Prefer environment variables over command-line wallet flags when possible, because shell history and process lists may expose secrets.
 - Use a dedicated wallet for automation instead of a primary treasury wallet.
 - Run `--dry-run` before high-value writes.
