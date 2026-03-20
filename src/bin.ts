@@ -18,12 +18,14 @@ import { registerFarmCommands } from './commands/farm'
 import { registerLiquidityCommands } from './commands/liquidity'
 import { registerContractCommands } from './commands/contract'
 
+const { version } = require('../package.json') as { version: string }
+
 const program = new Command()
 
 program
   .name('sun')
   .description('CLI for SUN.IO / SUNSWAP on TRON — for humans and AI agents')
-  .version('1.0.0')
+  .version(version)
   .option('--output <format>', 'Output format: table, json, tsv', 'table')
   .option('--json', 'Shorthand for --output json', false)
   .option('--fields <fields>', 'Comma-separated fields to include in output')
