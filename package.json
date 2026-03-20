@@ -1,6 +1,6 @@
 {
   "name": "@bankofai/sun-cli",
-  "version": "1.0.2-beta.1",
+  "version": "1.0.2-beta.2",
   "description": "CLI tool for SUN.IO / SUNSWAP on TRON — for humans and AI agents",
   "main": "dist/bin.js",
   "type": "commonjs",
@@ -41,7 +41,7 @@
     "utf-8-validate": "5.0.10"
   },
   "dependencies": {
-    "@bankofai/agent-wallet": "^2.3.0-beta.4",
+    "@bankofai/agent-wallet": "^2.3.0-beta.7",
     "@bankofai/sun-kit": "^1.0.0",
     "@scure/bip32": "^2.0.1",
     "@scure/bip39": "^2.0.1",
