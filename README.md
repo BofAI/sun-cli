@@ -14,7 +14,6 @@ A CLI for AI-driven and human-operated DeFi workflows on the TRON network throug
   - [Install](#install)
   - [Example Commands](#example-commands)
   - [Configuration](#configuration)
-    - [Environment Variables](#environment-variables)
     - [Wallet Configuration](#wallet-configuration)
     - [Network Configuration](#network-configuration)
 - [Command Guide](#command-guide)
@@ -155,13 +154,6 @@ Swap executed successfully
 Write operations such as `swap`, `liquidity`, and `contract send` require wallet credentials.
 
 ### Configuration
-
-#### Environment Variables
-
-**CRITICAL SECURITY NOTE**: Never store private keys or mnemonics directly in MCP configuration JSON files such as `claude_desktop_config.json` or `mcp.json`. For wallet setup, use `agent-wallet`'s file-backed configuration and the SDK-supported `AGENT_WALLET_*` settings.
-
-The CLI loads environment variables from a local `.env` file via `dotenv`. Use this for non-secret operational settings such as `TRONGRID_API_KEY`, `TRON_NETWORK`, and `TRON_RPC_URL`.
-
 
 #### Wallet Configuration
 
