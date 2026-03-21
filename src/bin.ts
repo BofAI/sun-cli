@@ -18,12 +18,14 @@ import { registerFarmCommands } from './commands/farm'
 import { registerLiquidityCommands } from './commands/liquidity'
 import { registerContractCommands } from './commands/contract'
 
+const { version } = require('../package.json') as { version: string }
+
 const program = new Command()
 
 program
   .name('sun')
   .description('CLI for SUN.IO / SUNSWAP on TRON — for humans and AI agents')
-  .version('1.0.0')
+  .version(version)
   .option('--output <format>', 'Output format: table, json, tsv', 'table')
   .option('--json', 'Shorthand for --output json', false)
   .option('--fields <fields>', 'Comma-separated fields to include in output')
@@ -54,10 +56,10 @@ program
     if (rootOpts.yes) setAutoConfirm(true)
     if (rootOpts.dryRun) setDryRun(true)
     if (rootOpts.network) process.env.TRON_NETWORK = rootOpts.network
-    if (rootOpts.privateKey) process.env.TRON_PRIVATE_KEY = rootOpts.privateKey
-    if (rootOpts.mnemonic) process.env.TRON_MNEMONIC = rootOpts.mnemonic
+    if (rootOpts.privateKey) process.env.AGENT_WALLET_PRIVATE_KEY = rootOpts.privateKey
+    if (rootOpts.mnemonic) process.env.AGENT_WALLET_MNEMONIC = rootOpts.mnemonic
     if (rootOpts.mnemonicAccountIndex) {
-      process.env.TRON_MNEMONIC_ACCOUNT_INDEX = rootOpts.mnemonicAccountIndex
+      process.env.AGENT_WALLET_MNEMONIC_ACCOUNT_INDEX = rootOpts.mnemonicAccountIndex
     }
     if (rootOpts.agentWalletPassword) {
       process.env.AGENT_WALLET_PASSWORD = rootOpts.agentWalletPassword

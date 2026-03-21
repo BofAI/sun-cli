@@ -5,9 +5,6 @@ describe('wallet', () => {
     jest.resetModules()
     jest.clearAllMocks()
     process.env = { ...originalEnv }
-    delete process.env.TRON_PRIVATE_KEY
-    delete process.env.TRON_MNEMONIC
-    delete process.env.TRON_MNEMONIC_ACCOUNT_INDEX
     delete process.env.AGENT_WALLET_PASSWORD
     delete process.env.AGENT_WALLET_DIR
     delete process.env.AGENT_WALLET_PRIVATE_KEY
@@ -24,6 +21,8 @@ describe('wallet', () => {
   function loadWalletModule(options?: {
     activeWallet?: Record<string, any>
     tronWeb?: Record<string, any>
+    getActiveWalletError?: Error
+    getActiveWalletValue?: Record<string, any> | null
   }) {
     const activeWallet = options?.activeWallet ?? {
       getAddress: jest.fn().mockResolvedValue('TWalletAddress'),
@@ -43,7 +42,15 @@ describe('wallet', () => {
     }
 
     const provider = {
-      getActiveWallet: jest.fn().mockResolvedValue(activeWallet),
+      getActiveWallet: options?.getActiveWalletError
+        ? jest.fn().mockRejectedValue(options.getActiveWalletError)
+        : jest
+            .fn()
+            .mockResolvedValue(
+              options?.getActiveWalletValue === undefined
+                ? activeWallet
+                : options.getActiveWalletValue,
+            ),
     }
 
     const resolveWalletProvider = jest.fn().mockReturnValue(provider)
@@ -68,30 +75,34 @@ describe('wallet', () => {
     }
   }
 
-  it('leaves wallet unconfigured when no credentials are set', async () => {
-    const { walletModule, resolveWalletProvider } = loadWalletModule()
+  it('leaves wallet unconfigured when the wallet provider cannot resolve an active wallet', async () => {
+    const { walletModule, resolveWalletProvider, provider } = loadWalletModule({
+      getActiveWalletError: new Error('No active wallet'),
+    })
 
     await walletModule.initWallet()
 
     expect(walletModule.isWalletConfigured()).toBe(false)
-    expect(resolveWalletProvider).not.toHaveBeenCalled()
+    expect(resolveWalletProvider).toHaveBeenCalledWith({ network: 'tron' })
+    expect(provider.getActiveWallet).toHaveBeenCalledTimes(1)
     expect(() => walletModule.getWallet()).toThrow('No wallet configured')
   })
 
-  it('rejects multiple wallet configuration modes', async () => {
-    process.env.TRON_PRIVATE_KEY = 'pk'
-    process.env.AGENT_WALLET_PASSWORD = 'pw'
+  it('leaves wallet unconfigured when the wallet provider returns null', async () => {
+    const { walletModule, resolveWalletProvider, provider } = loadWalletModule({
+      getActiveWalletValue: null,
+    })
 
-    const { walletModule, resolveWalletProvider } = loadWalletModule()
+    await walletModule.initWallet()
 
-    await expect(walletModule.initWallet()).rejects.toThrow(
-      'Set only one of TRON_PRIVATE_KEY, TRON_MNEMONIC, or AGENT_WALLET_PASSWORD.',
-    )
-    expect(resolveWalletProvider).not.toHaveBeenCalled()
+    expect(walletModule.isWalletConfigured()).toBe(false)
+    expect(resolveWalletProvider).toHaveBeenCalledWith({ network: 'tron' })
+    expect(provider.getActiveWallet).toHaveBeenCalledTimes(1)
+    expect(() => walletModule.getWallet()).toThrow('No wallet configured')
   })
 
-  it('initializes agent-wallet from private key env and exposes address', async () => {
-    process.env.TRON_PRIVATE_KEY = 'private-key'
+  it('initializes agent-wallet and exposes address', async () => {
+    process.env.AGENT_WALLET_PRIVATE_KEY = 'private-key'
     process.env.AGENT_WALLET_DIR = '/tmp/agent-wallet'
 
     const { walletModule, resolveWalletProvider, provider } = loadWalletModule()

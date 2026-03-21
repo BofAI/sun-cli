@@ -1,7 +1,7 @@
 import { Command } from 'commander'
 import { getNetwork } from '../lib/context'
 import { writeAction, readAction } from '../lib/command'
-import { printKeyValue, withSpinner } from '../lib/output'
+import { withSpinner } from '../lib/output'
 import { resolveTokenAddress, getSymbolOrAddress } from '../lib/tokens'
 import {
   SUNSWAP_V2_MAINNET_ROUTER,

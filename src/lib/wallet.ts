@@ -1,6 +1,10 @@
 import type { Wallet } from '@bankofai/sun-kit'
 import { createReadonlyTronWeb } from '@bankofai/sun-kit'
-import { resolveWalletProvider, type BaseWallet, type Eip712Capable } from '@bankofai/agent-wallet'
+import {
+  resolveWalletProvider,
+  type Wallet as BaseWallet,
+  type Eip712Capable,
+} from '@bankofai/agent-wallet'
 import { TronWeb } from 'tronweb'
 
 export type { Wallet }
@@ -8,41 +12,24 @@ export type { Wallet }
 let _wallet: Wallet | null = null
 
 export async function initWallet(): Promise<void> {
-  const privateKey =
-    process.env.AGENT_WALLET_PRIVATE_KEY?.trim() || process.env.TRON_PRIVATE_KEY?.trim() || ''
-  const mnemonic =
-    process.env.AGENT_WALLET_MNEMONIC?.trim() || process.env.TRON_MNEMONIC?.trim() || ''
-  const accountIndex =
-    process.env.AGENT_WALLET_MNEMONIC_ACCOUNT_INDEX?.trim() ||
-    process.env.TRON_MNEMONIC_ACCOUNT_INDEX?.trim() ||
-    ''
-  const walletPassword = process.env.AGENT_WALLET_PASSWORD?.trim() ?? ''
-  const walletDir = process.env.AGENT_WALLET_DIR?.trim() ?? ''
-  const configuredModes = [privateKey, mnemonic, walletPassword].filter(Boolean).length
-
-  if (configuredModes > 1) {
-    throw new Error('Set only one of TRON_PRIVATE_KEY, TRON_MNEMONIC, or AGENT_WALLET_PASSWORD.')
-  }
-  if (configuredModes === 0) {
+  _wallet = null
+  try {
+    const provider = resolveWalletProvider({ network: 'tron' })
+    const activeWallet = await provider.getActiveWallet()
+    if (activeWallet === null || activeWallet === undefined) {
+      _wallet = null
+      return
+    }
+    _wallet = new AgentWalletAdapter(activeWallet)
+  } catch {
     _wallet = null
-    return
   }
-
-  process.env.AGENT_WALLET_PRIVATE_KEY = privateKey
-  process.env.AGENT_WALLET_MNEMONIC = mnemonic
-  process.env.AGENT_WALLET_MNEMONIC_ACCOUNT_INDEX = accountIndex
-  process.env.AGENT_WALLET_PASSWORD = walletPassword
-  process.env.AGENT_WALLET_DIR = walletDir
-
-  const provider = resolveWalletProvider({ network: 'tron' })
-  const activeWallet = await provider.getActiveWallet()
-  _wallet = new AgentWalletAdapter(activeWallet)
 }
 
 export function getWallet(): Wallet {
   if (!_wallet) {
     throw new Error(
-      'No wallet configured. Set TRON_PRIVATE_KEY, TRON_MNEMONIC, or AGENT_WALLET_PASSWORD for agent-wallet.',
+      'No wallet configured. Set AGENT_WALLET_PRIVATE_KEY, AGENT_WALLET_MNEMONIC, or AGENT_WALLET_PASSWORD for agent-wallet.',
     )
   }
   return _wallet
@@ -77,7 +64,8 @@ class AgentWalletAdapter implements Wallet {
         ? (tronWeb as any).address.fromHex(ownerHex)
         : ownerAddress
 
-    ;(tronWeb as any).defaultAddress = { hex: ownerHex, base58: ownerBase58 }
+    const tronWebWithDefaultAddress = tronWeb as any
+    tronWebWithDefaultAddress.defaultAddress = { hex: ownerHex, base58: ownerBase58 }
     return tronWeb
   }
 

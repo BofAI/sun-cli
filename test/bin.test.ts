@@ -9,9 +9,9 @@ describe('bin root wallet flags', () => {
     jest.clearAllMocks()
     process.argv = [...originalArgv]
     process.env = { ...originalEnv }
-    delete process.env.TRON_PRIVATE_KEY
-    delete process.env.TRON_MNEMONIC
-    delete process.env.TRON_MNEMONIC_ACCOUNT_INDEX
+    delete process.env.AGENT_WALLET_PRIVATE_KEY
+    delete process.env.AGENT_WALLET_MNEMONIC
+    delete process.env.AGENT_WALLET_MNEMONIC_ACCOUNT_INDEX
     delete process.env.AGENT_WALLET_PASSWORD
     delete process.env.AGENT_WALLET_DIR
   })
@@ -77,17 +77,17 @@ describe('bin root wallet flags', () => {
     ]
 
     await mockBinWithWalletCommand(() => {
-      expect(process.env.TRON_PRIVATE_KEY).toBe('flag-private-key')
-      expect(process.env.TRON_MNEMONIC_ACCOUNT_INDEX).toBe('7')
+      expect(process.env.AGENT_WALLET_PRIVATE_KEY).toBe('flag-private-key')
+      expect(process.env.AGENT_WALLET_MNEMONIC_ACCOUNT_INDEX).toBe('7')
       expect(process.env.AGENT_WALLET_PASSWORD).toBe('flag-password')
       expect(process.env.AGENT_WALLET_DIR).toBe('/tmp/flag-wallet')
     })
   })
 
   it('lets root wallet flags override existing env values', async () => {
-    process.env.TRON_PRIVATE_KEY = 'env-private-key'
-    process.env.TRON_MNEMONIC = 'env mnemonic'
-    process.env.TRON_MNEMONIC_ACCOUNT_INDEX = '1'
+    process.env.AGENT_WALLET_PRIVATE_KEY = 'env-private-key'
+    process.env.AGENT_WALLET_MNEMONIC = 'env mnemonic'
+    process.env.AGENT_WALLET_MNEMONIC_ACCOUNT_INDEX = '1'
     process.env.AGENT_WALLET_PASSWORD = 'env-password'
     process.env.AGENT_WALLET_DIR = '/tmp/env-wallet'
 
@@ -107,9 +107,9 @@ describe('bin root wallet flags', () => {
     ]
 
     await mockBinWithWalletCommand(() => {
-      expect(process.env.TRON_PRIVATE_KEY).toBe('env-private-key')
-      expect(process.env.TRON_MNEMONIC).toBe('flag mnemonic')
-      expect(process.env.TRON_MNEMONIC_ACCOUNT_INDEX).toBe('3')
+      expect(process.env.AGENT_WALLET_PRIVATE_KEY).toBe('env-private-key')
+      expect(process.env.AGENT_WALLET_MNEMONIC).toBe('flag mnemonic')
+      expect(process.env.AGENT_WALLET_MNEMONIC_ACCOUNT_INDEX).toBe('3')
       expect(process.env.AGENT_WALLET_PASSWORD).toBe('flag-password')
       expect(process.env.AGENT_WALLET_DIR).toBe('/tmp/flag-wallet')
     })

@@ -13,8 +13,10 @@ A CLI for AI-driven and human-operated DeFi workflows on the TRON network throug
 - [Quick Start](#quick-start)
   - [Install](#install)
   - [Example Commands](#example-commands)
-  - [Wallet Configuration](#wallet-configuration)
-  - [Runtime Configuration](#runtime-configuration)
+  - [Configuration](#configuration)
+    - [Environment Variables](#environment-variables)
+    - [Wallet Configuration](#wallet-configuration)
+    - [Network Configuration](#network-configuration)
 - [Command Guide](#command-guide)
   - [Wallet & Portfolio](#wallet--portfolio)
   - [Price & Discovery](#price--discovery)
@@ -113,7 +115,7 @@ Found 3 route(s) for swap:
   (2 more route(s) available, use --all to see them)
 ```
 
-Wallet-aware:
+Wallet-aware: See [Wallet Configuration](#wallet-configuration).
 
 ```bash
 $ sun wallet address
@@ -152,49 +154,35 @@ Swap executed successfully
 
 Write operations such as `swap`, `liquidity`, and `contract send` require wallet credentials.
 
-### Wallet Configuration
+### Configuration
 
-**Option 1 (Recommended): [Agent Wallet](https://github.com/BofAI/agent-wallet#cli)** — password-protected encrypted keystore, purpose-built for AI agents. Private keys are never stored in plaintext.
+#### Environment Variables
 
-```bash
-export AGENT_WALLET_PASSWORD=your_wallet_password
-export AGENT_WALLET_DIR=/absolute/path/to/.agent   # optional, defaults to ~/.agent
-```
+**CRITICAL SECURITY NOTE**: Never store private keys or mnemonics directly in MCP configuration JSON files such as `claude_desktop_config.json` or `mcp.json`. For wallet setup, use `agent-wallet`'s file-backed configuration and the SDK-supported `AGENT_WALLET_*` settings.
 
-**Option 2: Private key**
+The CLI loads environment variables from a local `.env` file via `dotenv`. Use this for non-secret operational settings such as `TRONGRID_API_KEY`, `TRON_NETWORK`, and `TRON_RPC_URL`.
 
-```bash
-export AGENT_WALLET_PRIVATE_KEY=your_private_key
-# or
-export TRON_PRIVATE_KEY=your_private_key
-```
 
-**Option 3: Mnemonic**
+#### Wallet Configuration
 
-```bash
-export AGENT_WALLET_MNEMONIC="word1 word2 word3 ..."
-# or
-export TRON_MNEMONIC="word1 word2 word3 ..."
-
-export AGENT_WALLET_MNEMONIC_ACCOUNT_INDEX=0   # optional, default 0
-# or
-export TRON_MNEMONIC_ACCOUNT_INDEX=0            # optional, default 0
-```
+Wallets are managed through [`agent-wallet`](https://github.com/BofAI/agent-wallet?tab=readme-ov-file#quick-start) file-backed configuration. Install and configure `agent-wallet` first. This repository no longer reads or maps legacy `TRON_PRIVATE_KEY`, `TRON_MNEMONIC`, or `TRON_MNEMONIC_ACCOUNT_INDEX` wallet variables.
 
 > **Note**
-> You can also override these per invocation with root-level flags such as `-k`, `-m`, `-i`, `-p`, and `-d`.
+> You can override wallet settings for a single invocation with root-level flags such as `-k`, `-m`, `-i`, `-p`, and `-d`. See [`agent-wallet`](https://github.com/BofAI/agent-wallet?tab=readme-ov-file#quick-start) for wallet file formats, local setup, and the full set of SDK-supported `AGENT_WALLET_*` options.
 
-### Runtime Configuration
+#### Network Configuration
 
-Optional environment variables:
+- `TRON_NETWORK` — optional network override, defaults to `mainnet`
+- `TRONGRID_API_KEY` — optional TronGrid API key for higher-rate mainnet access
+- `TRON_RPC_URL` — optional custom TRON RPC endpoint
+
+Example:
 
 ```bash
 export TRON_NETWORK=mainnet
-export TRONGRID_API_KEY=your_api_key
+export TRONGRID_API_KEY="<YOUR_TRONGRID_API_KEY_HERE>"
 export TRON_RPC_URL=https://your-tron-rpc.example
 ```
-
-The CLI auto-loads `.env` files via `dotenv`, so you can keep these values in a local `.env` file as well.
 
 ## Command Guide
 
@@ -333,19 +321,19 @@ sun contract send <contractAddress> transfer --args '["TRecipient","1000000"]' -
 
 All commands inherit these root-level flags:
 
-| Flag                                     | Description                                                |
-| ---------------------------------------- | ---------------------------------------------------------- |
-| `--output <format>`                      | Output format: `table`, `json`, `tsv`                      |
-| `--json`                                 | Shortcut for JSON output                                   |
-| `--fields <list>`                        | Comma-separated output field filter                        |
-| `--network <network>`                    | Override `TRON_NETWORK`                                    |
-| `-k, --private-key <key>`                | Override `TRON_PRIVATE_KEY` for this invocation            |
-| `-m, --mnemonic <phrase>`                | Override `TRON_MNEMONIC` for this invocation               |
-| `-i, --mnemonic-account-index <index>`   | Override `TRON_MNEMONIC_ACCOUNT_INDEX` for this invocation |
-| `-p, --agent-wallet-password <password>` | Override `AGENT_WALLET_PASSWORD` for this invocation       |
-| `-d, --agent-wallet-dir <dir>`           | Override `AGENT_WALLET_DIR` for this invocation            |
-| `-y, --yes`                              | Skip confirmation prompts                                  |
-| `--dry-run`                              | Print intent without sending the write action              |
+| Flag                                     | Description                                               |
+| ---------------------------------------- | --------------------------------------------------------- |
+| `--output <format>`                      | Output format: `table`, `json`, `tsv`                     |
+| `--json`                                 | Shortcut for JSON output                                  |
+| `--fields <list>`                        | Comma-separated output field filter                       |
+| `--network <network>`                    | Override `TRON_NETWORK`                                   |
+| `-k, --private-key <key>`                | Provide a private key for this invocation only            |
+| `-m, --mnemonic <phrase>`                | Provide a mnemonic for this invocation only               |
+| `-i, --mnemonic-account-index <index>`   | Provide a mnemonic account index for this invocation only |
+| `-p, --agent-wallet-password <password>` | Override `AGENT_WALLET_PASSWORD` for this invocation      |
+| `-d, --agent-wallet-dir <dir>`           | Override `AGENT_WALLET_DIR` for this invocation           |
+| `-y, --yes`                              | Skip confirmation prompts                                 |
+| `--dry-run`                              | Print intent without sending the write action             |
 
 Examples:
 
@@ -418,8 +406,8 @@ npm run start -- --network nile swap TRX USDT 1000000
 
 Set exactly one wallet source:
 
-- `TRON_PRIVATE_KEY`
-- `TRON_MNEMONIC`
+- `AGENT_WALLET_PRIVATE_KEY`
+- `AGENT_WALLET_MNEMONIC`
 - `AGENT_WALLET_PASSWORD`
 
 Or provide the equivalent root-level flag for that invocation.
@@ -436,10 +424,9 @@ Common causes:
 
 Use `swap:quote` first and then retry with `--yes` only after the quote looks correct.
 
-
 ## Security Considerations
 
-- Treat `TRON_PRIVATE_KEY`, `TRON_MNEMONIC`, and `AGENT_WALLET_PASSWORD` as secrets.
+- Treat `AGENT_WALLET_PRIVATE_KEY`, `AGENT_WALLET_MNEMONIC`, and `AGENT_WALLET_PASSWORD` as secrets.
 - Prefer environment variables over command-line wallet flags when possible, because shell history and process lists may expose secrets.
 - Use a dedicated wallet for automation instead of a primary treasury wallet.
 - Run `--dry-run` before high-value writes.
