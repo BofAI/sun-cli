@@ -136,11 +136,11 @@ describe('outputError structured codes', () => {
   })
 
   it('includes error code in JSON output', () => {
-    outputError('Wallet required', new Error('Set TRON_PRIVATE_KEY'))
+    outputError('Wallet required', new Error('Set AGENT_WALLET_PRIVATE_KEY'))
     const parsed = JSON.parse(stdoutData)
     expect(parsed.code).toBe('WALLET_NOT_CONFIGURED')
     expect(parsed.error).toBe('Wallet required')
-    expect(parsed.detail).toBe('Set TRON_PRIVATE_KEY')
+    expect(parsed.detail).toBe('Set AGENT_WALLET_PRIVATE_KEY')
   })
 
   it('uses error object code if available', () => {

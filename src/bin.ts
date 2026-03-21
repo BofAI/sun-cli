@@ -56,10 +56,10 @@ program
     if (rootOpts.yes) setAutoConfirm(true)
     if (rootOpts.dryRun) setDryRun(true)
     if (rootOpts.network) process.env.TRON_NETWORK = rootOpts.network
-    if (rootOpts.privateKey) process.env.TRON_PRIVATE_KEY = rootOpts.privateKey
-    if (rootOpts.mnemonic) process.env.TRON_MNEMONIC = rootOpts.mnemonic
+    if (rootOpts.privateKey) process.env.AGENT_WALLET_PRIVATE_KEY = rootOpts.privateKey
+    if (rootOpts.mnemonic) process.env.AGENT_WALLET_MNEMONIC = rootOpts.mnemonic
     if (rootOpts.mnemonicAccountIndex) {
-      process.env.TRON_MNEMONIC_ACCOUNT_INDEX = rootOpts.mnemonicAccountIndex
+      process.env.AGENT_WALLET_MNEMONIC_ACCOUNT_INDEX = rootOpts.mnemonicAccountIndex
     }
     if (rootOpts.agentWalletPassword) {
       process.env.AGENT_WALLET_PASSWORD = rootOpts.agentWalletPassword

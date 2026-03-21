@@ -33,13 +33,6 @@ function getTronscanBaseUrl(network?: string): string | null {
   }
 }
 
-type BroadcastResult = {
-  txid?: string
-  txID?: string
-  network?: string
-  tronscanUrl?: string
-}
-
 function attachExplorerLink<T>(
   result: T,
   fallbackNetwork?: string,

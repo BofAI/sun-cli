@@ -12,9 +12,18 @@ export type { Wallet }
 let _wallet: Wallet | null = null
 
 export async function initWallet(): Promise<void> {
-  const provider = resolveWalletProvider({ network: 'tron' })
-  const activeWallet = await provider.getActiveWallet()
-  _wallet = new AgentWalletAdapter(activeWallet)
+  _wallet = null
+  try {
+    const provider = resolveWalletProvider({ network: 'tron' })
+    const activeWallet = await provider.getActiveWallet()
+    if (activeWallet === null || activeWallet === undefined) {
+      _wallet = null
+      return
+    }
+    _wallet = new AgentWalletAdapter(activeWallet)
+  } catch {
+    _wallet = null
+  }
 }
 
 export function getWallet(): Wallet {
@@ -55,7 +64,8 @@ class AgentWalletAdapter implements Wallet {
         ? (tronWeb as any).address.fromHex(ownerHex)
         : ownerAddress
 
-    ;(tronWeb as any).defaultAddress = { hex: ownerHex, base58: ownerBase58 }
+    const tronWebWithDefaultAddress = tronWeb as any
+    tronWebWithDefaultAddress.defaultAddress = { hex: ownerHex, base58: ownerBase58 }
     return tronWeb
   }
 

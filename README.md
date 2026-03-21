@@ -327,19 +327,19 @@ sun contract send <contractAddress> transfer --args '["TRecipient","1000000"]' -
 
 All commands inherit these root-level flags:
 
-| Flag                                     | Description                                                |
-| ---------------------------------------- | ---------------------------------------------------------- |
-| `--output <format>`                      | Output format: `table`, `json`, `tsv`                      |
-| `--json`                                 | Shortcut for JSON output                                   |
-| `--fields <list>`                        | Comma-separated output field filter                        |
-| `--network <network>`                    | Override `TRON_NETWORK`                                    |
-| `-k, --private-key <key>`                | Provide a private key for this invocation only             |
-| `-m, --mnemonic <phrase>`                | Provide a mnemonic for this invocation only                |
-| `-i, --mnemonic-account-index <index>`   | Provide a mnemonic account index for this invocation only  |
-| `-p, --agent-wallet-password <password>` | Override `AGENT_WALLET_PASSWORD` for this invocation       |
-| `-d, --agent-wallet-dir <dir>`           | Override `AGENT_WALLET_DIR` for this invocation            |
-| `-y, --yes`                              | Skip confirmation prompts                                  |
-| `--dry-run`                              | Print intent without sending the write action              |
+| Flag                                     | Description                                               |
+| ---------------------------------------- | --------------------------------------------------------- |
+| `--output <format>`                      | Output format: `table`, `json`, `tsv`                     |
+| `--json`                                 | Shortcut for JSON output                                  |
+| `--fields <list>`                        | Comma-separated output field filter                       |
+| `--network <network>`                    | Override `TRON_NETWORK`                                   |
+| `-k, --private-key <key>`                | Provide a private key for this invocation only            |
+| `-m, --mnemonic <phrase>`                | Provide a mnemonic for this invocation only               |
+| `-i, --mnemonic-account-index <index>`   | Provide a mnemonic account index for this invocation only |
+| `-p, --agent-wallet-password <password>` | Override `AGENT_WALLET_PASSWORD` for this invocation      |
+| `-d, --agent-wallet-dir <dir>`           | Override `AGENT_WALLET_DIR` for this invocation           |
+| `-y, --yes`                              | Skip confirmation prompts                                 |
+| `--dry-run`                              | Print intent without sending the write action             |
 
 Examples:
 
@@ -429,7 +429,6 @@ Common causes:
 - stale or invalid route parameters
 
 Use `swap:quote` first and then retry with `--yes` only after the quote looks correct.
-
 
 ## Security Considerations
 
